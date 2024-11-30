@@ -21,7 +21,7 @@
         <div class="row">
           <div class="col-3">
 
-           <a href="crear_empresa.php"> <button type="button" class="btn btn-block btn-outline-primary btn-lg">Crear Negocio</button></a>
+            <h2>Aqui Ira Un Calendario</h2>
           
           </div>        
         </div>

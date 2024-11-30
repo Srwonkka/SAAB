@@ -131,7 +131,7 @@ function actualizarCampoCambio() {
  
     //  CONFIGURANDO TABLAS
     $(document).ready(function () {
-      var table = $("#listaClientes, #listaProductos, #lista_categoria").DataTable({
+      var table = $("#listaClientes, #listaProcesos,listaArchivos").DataTable({
         "responsive": true,
         "lengthChange": false,
         "autoWidth": false,

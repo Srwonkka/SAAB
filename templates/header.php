@@ -2,7 +2,7 @@
 
     session_start();
     include("../db.php");
-    $url_base = "http://localhost/Tienda/";
+    $url_base = "http://localhost/SAAB/SAAB/";
 
     if (!isset($_SESSION['usuario_usuario'])) {
       header("Location:".$url_base."login.php");
@@ -20,20 +20,14 @@
 
     if ($valSudoAdmin) {
       $inicio_link = "index.php";
-    //SECCIÓN DE PRODUCTOS
-      $crear_categoria_link = 'crear_categoria.php';
-      $lista_categoria_link = 'lista_categoria.php';
-      $crear_producto_link = 'crear_producto.php';
-      $lista_producto_link = 'index_productos.php';
-      $editar_producto_link = 'editar_productos.php';
     //SECCIÓN DE CLIENTES
       $crear_cliente_link = 'crear_cliente.php';
       $lista_cliente_link = 'index_clientes.php';
       $editar_cliente_link = 'editar_clientes.php';
-      $editar_cliente_link = 'editar_clientes.php';
     //SECCIÓN DE PROVEEDORES
-      $crear_proveedore_link = 'crear_proveedor.php';
-      $lista_proveedore_link = 'index_proveedores.php';    
+      $crear_proceso_link = 'crear_proceso.php';
+      $lista_procesos_link = 'index_procesos.php';    
+      $ver_proceso = 'ver_proceso.php'; 
   }
 ?>
 <!DOCTYPE html>
@@ -41,8 +35,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tienda</title>
-  <link rel="icon" type="image/x-icon" href="../dist/img/logos/logoTienda.jpg">
+  <title>SAAB</title>
+  <link rel="icon" type="image/x-icon" href="../dist/img/logos/LogoSaab.png">
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
@@ -130,7 +124,7 @@
       <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
        <a class="brand-link">
-        <img src="../dist/img/logos/logoTienda.jpg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">        
+        <img src="../dist/img/logos/LogoSaab.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">        
           <span class="brand-text font-weight-light">Admin</span>          
         </a> 
     
@@ -170,42 +164,6 @@
                   </a>
                 </li>
               </li>
-          <!-- SECCIÓN DE PRODUCTOS --> 
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-shopping-basket fa-lg mr-2"></i>
-                <p>
-                  PRODUCTOS
-                  <i class="fas fa-angle-left right"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="<?php echo $url_base;?>secciones/<?php echo $crear_categoria_link?>" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Crear Categoria</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="<?php echo $url_base;?>secciones/<?php echo $lista_categoria_link?>" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Lista de Categorias</p>
-                  </a>
-                </li> 
-                <li class="nav-item">
-                  <a href="<?php echo $url_base;?>secciones/<?php echo $crear_producto_link?>" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Crear Producto</p>
-                  </a>
-                </li>
-                  <li class="nav-item">
-                  <a href="<?php echo $url_base;?>secciones/<?php echo $lista_producto_link?>" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Lista de Productos</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
 
           <!-- SECCIÓN DE CLIENTES -->
             <li class="nav-item">
@@ -235,23 +193,24 @@
           <!-- PROVEEDORES -->  
             <li class="nav-item">
               <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-truck fa-lg mr-2"></i>
+              <i class="nav-icon fa fa-archive fa-lg mr-2"></i>
+              
                 <p>
-                  PROVEEDORES  
+                  PROCESOS
                   <i class="fas fa-angle-left right"></i>
                 </p>
               </a>
               <ul class="nav nav-treeview">              
                 <li class="nav-item">
-                  <a href="<?php echo $url_base;?>secciones/<?php echo $crear_proveedore_link;?>" class="nav-link">
+                  <a href="<?php echo $url_base;?>secciones/<?php echo $crear_proceso_link;?>" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Crear Proveedor</p>
+                    <p>Crear Proceso</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="<?php echo $url_base;?>secciones/<?php echo $lista_proveedore_link;?>" class="nav-link">
+                  <a href="<?php echo $url_base;?>secciones/<?php echo $lista_procesos_link;?>" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Lista Proveedores</p>
+                    <p>Lista Procesos</p>
                   </a>
                 </li>
               </ul>
