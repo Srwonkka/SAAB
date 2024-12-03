@@ -100,38 +100,10 @@
     })
   })
 
-    // Escucha los cambios en los campos precio menor y mayor
-    $(document).on('input', '.precio_menor', function () {
-      var fila = $(this).closest('tr');
-      var tipoPrecio = $('input[name="tipo-precio"]:checked').val(); 
-      actualizarTotal(fila, tipoPrecio); 
-    });
-    $(document).on('input', '.precio_mayor', function () {
-      var fila = $(this).closest('tr');
-      var tipoPrecio = $('input[name="tipo-precio"]:checked').val(); 
-      actualizarTotal(fila, tipoPrecio); 
-    });
 
-    
-
-// Función para actualizar el campo de cambio
-function actualizarCampoCambio() {
-    let total_factura = $(".campo-total-global").val();
-    total_factura = total_factura.replace(/[$,]/g, "");
-    let recibido = $("#recibido").val();
-    recibido = recibido.replace(/[$,.]/g, "");
-
-    // Calcula el cambio
-    let cambio = recibido - total_factura;
-    // Actualiza el campo "Se devuelve"
-    let cambioFormateado = cambio.toLocaleString('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 0});
-    // Actualiza el campo "Se devuelve"
-    $('.se_devuelve').val(cambioFormateado);
-}
- 
     //  CONFIGURANDO TABLAS
     $(document).ready(function () {
-      var table = $("#listaClientes, #listaProcesos,listaArchivos").DataTable({
+      var table = $("#listaClientes, #listaProcesos, #listaArchivos").DataTable({
         "responsive": true,
         "lengthChange": false,
         "autoWidth": false,
@@ -165,131 +137,33 @@ function actualizarCampoCambio() {
       table.buttons().container().appendTo('#vBuscar_wrapper .col-md-6:eq(0)');
     });
 
-    // Quitar las flechas de los campos number
-    document.addEventListener('DOMContentLoaded', function() {
-      var numberInput = document.getElementById('producto_stock_total');
-      var numberInput_2 = document.getElementById('producto_modelo');
-      var numberInput_add = document.getElementById('producto_stock_total_add');
-
-      numberInput.addEventListener('focus', function() {
-          this.setAttribute('type', 'text');
-      });
-      numberInput.addEventListener('blur', function() {
-          this.setAttribute('type', 'number');
-      });
-
-      numberInput_2.addEventListener('focus', function() {
-          this.setAttribute('type', 'text');
-      });
-      numberInput_2.addEventListener('blur', function() {
-          this.setAttribute('type', 'number');
-      });
-
-      numberInput_add.addEventListener('focus', function() {
-          this.setAttribute('type', 'text');
-      });
-      numberInput_add.addEventListener('blur', function() {
-          this.setAttribute('type', 'number');
-      });
-    });
-
-    // Ocultar y mostrar campo de cuotas cuando pagan a credito
-    document.addEventListener("DOMContentLoaded", function () {
-      mostrarOcultarPartes();
-    });
-
-
-    // Función formato dinero 
-  $(document).ready(function() {
-      function formatDineroSinDecimales(valor) {
-          return "$" + parseFloat(valor).toFixed(0).replace(/\d(?=(\d{3})+$)/g, "$&,");
-      }
-      $("#producto_precio_compra, #producto_precio_venta" + "#producto_precio_compra_edit, #producto_precio_venta_edit,#precio_compra_stock, #precio_venta_stock").on("input", function() {
-          var valor = $(this).val().replace(/[^0-9]/g, '');
-          $(this).val(formatDineroSinDecimales(valor));
-      });
-
-      // Evento al enviar el formulario
-      $("form").submit(function() {
-          var valor = $("#producto_precio_compra, #producto_precio_venta," + "#producto_precio_compra_edit,#precio_compra_stock,#precio_venta_stock").val().replace(/[^0-9]/g, ''); 
-          $("#cajaEfectivo").val(valor);
-      });
-  });
-
-  // Validar los select obligatorios
-  function validarFormulario(id) {
-    if (id == 1) {
-      var categoriaSeleccionada = document.forms["formProducto"]["categoria_id"].value;
-     // var proveedorSeleccionado = document.forms["formProducto"]["proveedor_id"].value;
-      if (categoriaSeleccionada == "") {
-          Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Por favor, seleccione una categoría.',
-          });
-          return false;
-      }
-      // if (proveedorSeleccionado == "") {
-      //     Swal.fire({
-      //         icon: 'error',
-      //         title: 'Oops...',
-      //         text: 'Por favor, seleccione un proveedor.',
-      //     });
-      //     return false;
-      // }
-    }else if(id == 2){
-      var rolSeleccionado = document.forms["formEmpleado"]["usuario_empresa"].value;
-    //   var cajaSeleccionado = document.forms["formEmpleado"]["usuario_caja"].value;
-
-      if (rolSeleccionado == "") {
-          Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Por favor, seleccione un negocio donde va a laboral el empleado.',
-          });
-          return false;
-      }
-    //   if (cajaSeleccionado == "") {
-    //       Swal.fire({
-    //           icon: 'error',
-    //           title: 'Oops...',
-    //           text: 'Por favor, seleccione una Caja para el empleado.',
-    //       });
-    //       return false;
-    //   }
-    }else if (id == 3) {
-      var usuario_empresaSeleccionada = document.forms["formGastos"]["usuario_empresa_gastos"].value;
-      if (usuario_empresaSeleccionada == "") {
-          Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Por favor, seleccione una Empresa.',
-          });
-          return false;
-      }
-    }else if (id == 4) {
-      var negocioSeleccionada = document.forms["formNomina"]["nomina_empresa"].value;
-      var nomina_empleadosSeleccionada = document.forms["formNomina"]["nomina_empleados"].value;
-      if (negocioSeleccionada == "") {
-          Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Por favor, seleccione una Empresa.',
-          });
-          return false;
-      }
-      if (nomina_empleadosSeleccionada == "") {
-          Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Por favor, seleccione un Empleado.',
-          });
-          return false;
-      }
+    //Eliminar Archivo de un proceso
+    function eliminarArchivo(idArchivo, boton) {
+    if (confirm("¿Estás seguro de que deseas eliminar este archivo?")) {
+        fetch('eliminar_archivo.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `id_archivo=${idArchivo}`
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data === "success") {
+                // Eliminar la fila del archivo en la tabla
+                const fila = boton.closest('tr');
+                fila.remove();
+                alert("Archivo eliminado correctamente.");
+            } else {
+                alert("Error al eliminar el archivo: " + data);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Ocurrió un error al eliminar el archivo.");
+        });
     }
-    return true;
 }
-    
   // Cerrar session sola 
   function cerrarSesion() {
         document.getElementById('cerrarSesion').click();

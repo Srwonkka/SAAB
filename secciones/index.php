@@ -15,7 +15,7 @@
 </style>
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
-          <img class="animation__shake" src="../dist/img/logos/logo_nube.png" alt="AdminLTELogo" height="60" width="80">
+          <img class="animation__shake" src="../dist/img/logos/logoSaab.png" alt="AdminLTELogo" height="250" width="250">
         </div>
         <br>
         <div class="row">

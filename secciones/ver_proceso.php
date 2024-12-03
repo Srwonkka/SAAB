@@ -1,18 +1,15 @@
 <?php include("../templates/header.php") ?>
 <?php
 
-if ($_SESSION['valSudoAdmin']) {
-    $lista_procesos_link  = "index_procesos.php";
+$lista_procesos_link  = "index_procesos.php";
   
- }else{
-    $lista_procesos_link  = "index_procesos.php?link=".$link;
- }
+ 
 
 if (isset($_GET['txtID'])) {
 
     $txtID = (isset($_GET['txtID'])) ? $_GET['txtID'] : "";
    
-    // Obtener los procesos
+    //Obtener datos del proceso
     $datos_proveedores = $conexion->prepare("SELECT * FROM procesos WHERE id_proceso = :id_proceso");
 
     $datos_proveedores->bindParam(":id_proceso", $txtID);
@@ -30,69 +27,55 @@ if (isset($_GET['txtID'])) {
 
     $link_proveedores = $registro['link'];
     
-    if ($_POST) {
-        $txtID = (isset($_POST['txtID'])) ? $_POST['txtID'] : "";
-        $radicado_proceso = isset($_POST['num_radicado']) ? $_POST['num_radicado'] : " ";
-        $denunciante_proceso = isset($_POST['denunciante_proceso']) ? $_POST['denunciante_proceso'] : " ";
-        $cc_denunciante_proceso = isset($_POST['cc_denunciante_proceso']) ? $_POST['cc_denunciante_proceso'] : " ";
-        $demandado_proceso = isset($_POST['demandado_proceso']) ? $_POST['demandado_proceso'] : " ";
-        $cc_demandado_proceso = isset($_POST['cc_demandado_proceso']) ? $_POST['cc_demandado_proceso'] : " ";
-        $clase_proceso = isset($_POST['claset_proceso']) ? $_POST['claset_proceso'] : " ";
-        $autoridad_proceso = isset($_POST['autoridad_proceso']) ? $_POST['autoridad_proceso'] : " ";
-        $observacion_proceso = isset($_POST['observaciones_proceso']) ? $_POST['observaciones_proceso'] : " ";
+    
+}
+// Recuperar el archivo y otros datos del formulario
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['documento'])) {
+    
+    $txtID = (isset($_GET['txtID'])) ? $_GET['txtID'] : "";
+    $id_proceso = $txtID; 
+    $file = $_FILES['documento'];
 
-        $link = isset($_POST['link']) ? $_POST['link'] : " ";
+    // Verificar si el archivo es un PDF
+    if ($file['type'] == 'application/pdf') {
+        $nombre_archivo = $file['name'];
+        $archivo_tmp = $file['tmp_name'];
+        $archivo_contenido = file_get_contents($archivo_tmp);
 
-        $sentencia_edit = $conexion->prepare("UPDATE procesos SET 
-        radicado_proceso=:radicado_proceso, denunciante_proceso=:denunciante_proceso, cc_denunciante_proceso=:cc_denunciante_proceso,
-        demandado_proceso=:demandado_proceso, cc_demandado_proceso=:cc_demandado_proceso,clase_proceso=:clase_proceso,autoridad_proceso=:autoridad_proceso,observacion_proceso=:observacion_proceso, link=:link WHERE id_proceso=:id_proceso");
+        // Preparar la consulta SQL para insertar el archivo
+        $query = $conexion->prepare("INSERT INTO archivos (id_proceso, a_archivo, a_blob) VALUES (:id_proceso, :a_archivo, :a_blob)");
+        $query->bindParam(":id_proceso", $id_proceso);
+        $query->bindParam(":a_archivo", $nombre_archivo);
+        $query->bindParam(":a_blob", $archivo_contenido, PDO::PARAM_LOB);
 
-        $sentencia_edit->bindParam(":id_proceso", $txtID);
-        $sentencia_edit->bindParam(":radicado_proceso", $radicado_proceso);
-        $sentencia_edit->bindParam(":denunciante_proceso", $denunciante_proceso);
-        $sentencia_edit->bindParam(":cc_denunciante_proceso", $cc_denunciante_proceso);
-        $sentencia_edit->bindParam(":demandado_proceso", $demandado_proceso);
-        $sentencia_edit->bindParam(":cc_demandado_proceso", $cc_demandado_proceso);
-        $sentencia_edit->bindParam(":clase_proceso", $clase_proceso);
-        $sentencia_edit->bindParam(":autoridad_proceso", $autoridad_proceso);
-        $sentencia_edit->bindParam(":observacion_proceso", $observacion_proceso);
-
-        $sentencia_edit->bindParam(":link", $link);
-
-        $resultado_edit = $sentencia_edit->execute();
-
-        if ($resultado_edit) {
-            echo '<script>
-            Swal.fire({
-                title: "¡Proceso Editado Exitosamente!",
-                icon: "success",
-                confirmButtonText: "¡Entendido!"
-            }).then((result)=>{
-                if(result.isConfirmed){
-                    window.location.href = "'.$url_base.'secciones/'.$lista_procesos_link.'";
-                }
-            })
-        </script>';
+        // Ejecutar la consulta
+        if ($query->execute()) {
+            echo "Archivo subido exitosamente.";
         } else {
-            echo '<script>
-            Swal.fire({
-                title: "Error al Actualizar el Proceso",
-                icon: "error",
-                confirmButtonText: "¡Entendido!"
-            });
-            </script>';
-            }
+            echo "Error al subir el archivo.";
+        }
+    } else {
+        echo "Solo se permiten archivos PDF.";
     }
 }
 
+//Obtener los archivos del proceso
+if (isset($_GET['txtID'])) {
+    $archivos_proceso = $conexion->prepare("SELECT * FROM archivos WHERE id_proceso = :id_proceso");
+    $archivos_proceso -> bindparam(":id_proceso", $txtID);
+    $archivos_proceso -> execute();
+
+    $registro_archivo = $archivos_proceso->fetchAll(PDO::FETCH_ASSOC);
+
+    }
 ?>
+
 
 <br>
     <div class="card card-warning" style="margin-top:5%">
         <div class="card-header">
             <h2 class="card-title textTabla">Radicado <?=$num_radicado?></h2>
         </div>
-        <form action=" " method="post">
             <div class="card-body">
                 <input type="hidden" name="txtID" value="<?= $txtID ?>">
                 <input type="hidden" name="link" value="<?= $link_proveedores ?>">                
@@ -155,34 +138,59 @@ if (isset($_GET['txtID'])) {
                     </div>
                 </div>
                 <!--Tabla de Archivos -->      
-                    <table id="listaArchivos" class="table table-bordered table-striped" style="text-align:center">
+                    <table id="listaArchivos" class="table table-bordered table-striped" style="text-align:center; ">
                         <thead>
                         <tr>
-                        <th>#</th>
-                        <th>Nombre</th>
-                        <th>Fecha</th>
-                        <th>Opciones</th>
+                        <th style="width: 10%;">#</th>
+                        <th style="width: 50%;">Nombre</th>
+                        <th style="width: 10%;">Fecha</th>
+                        <th style="width: 20%;">Opciones</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <!-- <?php $count = 0;
-                        foreach ($lista_archivo as $registro) {?> -->
-                                <!-- <?php } ?> -->
-                            <tr>
-                            <td scope="row"><?php $count++;  echo $count; ?></td>    
-                            <td>nombre el archivo</td>
-                            <td>fecha</td>          
-                            <td>
-                                Aqui boton descarga / eliminar                    
-                            </td>
-                            </tr>  
-                        </tbody>                  
-                    </table>                
+                            <?php 
+                            $count = 0; // Contador para enumerar las filas
+                            foreach ($registro_archivo as $registro) { 
+                                $count++;
+                            ?>
+                                <tr>
+                                    <td scope="row"><?= $count; ?></td>    
+                                    <td><?= htmlspecialchars($registro['a_archivo']); ?></td> <!-- Muestra el nombre del archivo -->
+                                    <td><?= htmlspecialchars($registro['a_fecha']); ?></td> <!-- Muestra la fecha -->
+                                    <td>
+                                        <!-- Botón para Ver el archivo -->
+                                        <a href="ver_archivo.php?txtID=<?= $registro['id_archivo']; ?>" class="btn btn-info" target="_blank">Ver</a>
+
+                                        <!-- Botón para eliminar -->
+                                        <button class="btn btn-danger" 
+                                        onclick="eliminarArchivo(<?= $registro['id_archivo']; ?>, this)">Eliminar</button>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>                 
+                    </table>  
+                        <!-- Subir Archivo -->
+                    <div class="text-center " style="text-align:center; margin-top: 20px; padding: 20px;">
+                        <form action="" method="post" enctype="multipart/form-data" style="display: inline-block;">
+                            <label for="documento" style="display: block; margin-bottom: 10px; font-family: Arial, sans-serif; color: #555;">Selecciona un archivo:</label>
+                            <input 
+                                type="file" 
+                                name="documento" 
+                                id="documento" 
+                                style="padding: 5px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">                            
+                            <input 
+                                type="submit" 
+                                value="Subir" 
+                                style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 15px;"
+                                onmouseover="this.style.backgroundColor='#0056b3'" 
+                                onmouseout="this.style.backgroundColor='#007bff'">
+                        </form>
+                    </div>
+
+                               
                     <div style="text-align:center; margin-top: 20px;">
                         <a role="button" href="<?php echo $url_base; ?>secciones/<?php echo $lista_procesos_link; ?>" class="btn btn-danger btn-lg">Salir</a>
                     </div>
-
             </div>
-        </form>
     </div>
     <?php include("../templates/footer.php") ?>
